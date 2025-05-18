@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ace Company | sleep track</title>
+  <link rel="icon" type="image/png" href="acelogoT.png" />
+    <style>
+        :root {
+            --primary-color: #2e4c3c;
+            --primary-light: #3e6351;
+            --primary-dark: #1e3528;
+            --bg-light: #f5f9f6;
+            --white: #fff;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(46, 76, 60, 0.15);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f9f6;
+            margin: 0;
+            padding: 30px 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        h1, h2 {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 12px;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background-color: var(--bg-light);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(46, 76, 60, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(46, 76, 60, 0.2);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(46, 76, 60, 0.1);
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 76, 60, 0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .chart-container {
+            margin-top: 40px;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            background-color: var(--bg-light);
+            border: 1px solid rgba(46, 76, 60, 0.1);
+        }
+        
+        #sleepChart {
+            width: 100%;
+            height: 320px;
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(46, 76, 60, 0.05);
+        }
+        
+        .log-container {
+            margin-top: 40px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(46, 76, 60, 0.05);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: var(--white);
+            font-weight: 600;
+        }
+        
+        td {
+            background-color: var(--white);
+            border-bottom: 1px solid rgba(46, 76, 60, 0.1);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background-color: rgba(245, 249, 246, 0.6);
+        }
+        
+        .delete-btn {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .delete-btn:hover {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #c82333;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            height: 250px;
+            padding: 20px 10px 10px 40px;
+        }
+        
+        .bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 8px;
+        }
+        
+        .bar {
+            width: 40px;
+            background: linear-gradient(to top, var(--primary-color), var(--primary-light));
+            border-radius: 6px 6px 0 0;
+            transition: height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        
+        .bar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+        
+        .bar-label {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+        
+        .bar-value {
+            font-size: 13px;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: var(--primary-color);
+            background-color: rgba(46, 76, 60, 0.05);
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+        
+        .chart-y-axis {
+            position: absolute;
+            left: 15px;
+            top: 20px;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .y-axis-mark {
+            font-size: 12px;
+            color: var(--primary-dark);
+            opacity: 0.7;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .y-axis-mark::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 25px;
+            width: 600px;
+            height: 1px;
+            background-color: rgba(46, 76, 60, 0.07);
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 30px;
+            color: var(--primary-dark);
+            font-style: italic;
+            background-color: rgba(46, 76, 60, 0.03);
+            border-radius: 8px;
+            border: 1px dashed rgba(46, 76, 60, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sleep Tracker</h1>
+        
+        <div class="input-section">
+            <form id="sleepForm">
+                <div class="form-group">
+                    <label for="sleepDate">Date:</label>
+                    <input type="date" id="sleepDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="sleepHours">Hours of Sleep:</label>
+                    <input type="number" id="sleepHours" min="0" max="24" step="0.5" placeholder="Enter hours of sleep" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Log Sleep</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="chart-container">
+            <h2>Sleep History</h2>
+            <div id="sleepChart">
+                <div class="chart-y-axis">
+                    <div class="y-axis-mark">12h</div>
+                    <div class="y-axis-mark">9h</div>
+                    <div class="y-axis-mark">6h</div>
+                    <div class="y-axis-mark">3h</div>
+                    <div class="y-axis-mark">0h</div>
+                </div>
+                <div class="chart-bars" id="chartBars">
+                    <div class="empty-message">No sleep data recorded yet.</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="log-container">
+            <h2>Sleep Log</h2>
+            <table id="sleepLogTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Hours</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="sleepLogBody">
+                    <!-- Sleep log entries will be added here -->
+                </tbody>
+            </table>
+            <div id="emptyLogMessage" class="empty-message">No sleep data recorded yet.</div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize sleep data from localStorage
+        let sleepData = JSON.parse(localStorage.getItem('sleepData')) || [];
+        
+        // DOM elements
+        const sleepForm = document.getElementById('sleepForm');
+        const sleepDateInput = document.getElementById('sleepDate');
+        const sleepHoursInput = document.getElementById('sleepHours');
+        const sleepLogBody = document.getElementById('sleepLogBody');
+        const chartBars = document.getElementById('chartBars');
+        const emptyLogMessage = document.getElementById('emptyLogMessage');
+        
+        // Set default date to today
+        const today = new Date();
+        const formattedDate = today.toISOString().substr(0, 10);
+        sleepDateInput.value = formattedDate;
+        
+        // Event listener for form submission
+        sleepForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const date = sleepDateInput.value;
+            const hours = parseFloat(sleepHoursInput.value);
+            
+            // Check if an entry for this date already exists
+            const existingEntryIndex = sleepData.findIndex(entry => entry.date === date);
+            
+            if (existingEntryIndex !== -1) {
+                // Update existing entry
+                sleepData[existingEntryIndex].hours = hours;
+                alert('Updated sleep hours for existing date entry');
+            } else {
+                // Add new entry
+                sleepData.push({ date, hours });
+            }
+            
+            // Sort by date (newest last)
+            sleepData.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Save to localStorage
+            localStorage.setItem('sleepData', JSON.stringify(sleepData));
+            
+            // Reset form
+            sleepHoursInput.value = '';
+            
+            // Update UI
+            updateSleepLog();
+            updateChart();
+        });
+        
+        // Function to update the sleep log table
+        function updateSleepLog() {
+            sleepLogBody.innerHTML = '';
+            
+            if (sleepData.length === 0) {
+                emptyLogMessage.style.display = 'block';
+            } else {
+                emptyLogMessage.style.display = 'none';
+                
+                sleepData.forEach((entry, index) => {
+                    const row = document.createElement('tr');
+                    
+                    // Format date for display (YYYY-MM-DD to MM/DD/YYYY)
+                    const dateObj = new Date(entry.date);
+                    const formattedDate = dateObj.toLocaleDateString();
+                    
+                    row.innerHTML = `
+                        <td>${formattedDate}</td>
+                        <td>${entry.hours} hours</td>
+                        <td>
+                            <button class="delete-btn" data-index="${index}">Delete</button>
+                        </td>
+                    `;
+                    
+                    sleepLogBody.appendChild(row);
+                });
+                
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        sleepData.splice(index, 1);
+                        localStorage.setItem('sleepData', JSON.stringify(sleepData));
+                        updateSleepLog();
+                        updateChart();
+                    });
+                });
+            }
+        }
+        
+        // Function to update the chart
+        function updateChart() {
+            chartBars.innerHTML = '';
+            
+            if (sleepData.length === 0) {
+                chartBars.innerHTML = '<div class="empty-message">No sleep data recorded yet.</div>';
+                return;
+            }
+            
+            // Get the last 7 entries (or fewer if not enough data)
+            const recentData = sleepData.slice(-7);
+            
+            // Calculate ideal sleep zone (7-9 hours)
+            const idealMinHours = 7;
+            const idealMaxHours = 9;
+            
+            recentData.forEach(entry => {
+                const barContainer = document.createElement('div');
+                barContainer.className = 'bar-container';
+                
+                const barValue = document.createElement('div');
+                barValue.className = 'bar-value';
+                barValue.textContent = `${entry.hours}h`;
+                
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                
+                // Calculate bar height (max height is 250px for 12 hours)
+                const maxHours = 12;
+                const heightPercentage = Math.min(entry.hours / maxHours * 100, 100);
+                const barHeight = (heightPercentage * 250) / 100;
+                bar.style.height = `${barHeight}px`;
+                
+                // Set bar color based on sleep duration
+                if (entry.hours < idealMinHours) {
+                    bar.style.background = 'linear-gradient(to top, #c23616, #e84118)'; // Red for under-sleep
+                } else if (entry.hours > idealMaxHours) {
+                    bar.style.background = 'linear-gradient(to top, #6a0572, #ab83a1)'; // Purple for over-sleep
+                } else {
+                    bar.style.background = 'linear-gradient(to top, #2e4c3c, #3e6351)'; // Green theme for ideal sleep
+                }
+                
+                const dateObj = new Date(entry.date);
+                const month = dateObj.getMonth() + 1;
+                const day = dateObj.getDate();
+                
+                const barLabel = document.createElement('div');
+                barLabel.className = 'bar-label';
+                barLabel.textContent = `${month}/${day}`;
+                
+                barContainer.appendChild(barValue);
+                barContainer.appendChild(bar);
+                barContainer.appendChild(barLabel);
+                
+                chartBars.appendChild(barContainer);
+            });
+        }
+        
+        // Initial UI update
+        updateSleepLog();
+        updateChart();
+    </script>
+</body>
+</html>
