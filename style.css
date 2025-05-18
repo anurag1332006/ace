@@ -328,11 +328,12 @@ h1 {
     .left-panel, .right-panel {
       flex-direction: column-reverse;
     }
-    .middle-panel {
-      display: none;
-    }
-  
   }
+    @media(max-width:1200px){.middle-panel {
+      display: none;
+    }}
+  
+  
 
 
 
