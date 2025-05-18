@@ -324,7 +324,7 @@ h1 {
   font-size: 0.9em;
   opacity: 0.8;
 }
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
     .left-panel, .right-panel {
       flex-direction: column-reverse;
     }
